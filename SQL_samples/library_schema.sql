@@ -1,60 +1,66 @@
-CREATE TABLE Publisher
+CREATE TABLE publisher
 (
     publisher_id INT AUTO_INCREMENT PRIMARY KEY,
     name         VARCHAR(100) NOT NULL,
     address      VARCHAR(255)
 );
-CREATE TABLE Book
+
+CREATE TABLE book
 (
-    book_id         INT AUTO_INCREMENT PRIMARY KEY,
-    title           VARCHAR(255) NOT NULL,
-    isbn            VARCHAR(20) UNIQUE,
-    edition         VARCHAR(50),
-    publication_year YEAR,
-    language        VARCHAR(50),
-    summary         TEXT,
-    cover_image_url VARCHAR(255),
-    publisher_id    INT,
+    book_id          INT AUTO_INCREMENT PRIMARY KEY,
+    title            VARCHAR(255) NOT NULL,
+    isbn             VARCHAR(20) UNIQUE,
+    edition          VARCHAR(50),
+    publication_year INT,
+    language         VARCHAR(50),
+    summary          TEXT,
+    cover_image_url  VARCHAR(255),
+    publisher_id     INT,
     CONSTRAINT fk_book_publisher FOREIGN KEY (publisher_id)
-        REFERENCES Publisher (publisher_id)
+        REFERENCES publisher (publisher_id)
         ON DELETE SET NULL
 );
-CREATE TABLE Author
+
+CREATE TABLE author
 (
     author_id INT AUTO_INCREMENT PRIMARY KEY,
     name      VARCHAR(255) NOT NULL,
     bio       TEXT
 );
-CREATE TABLE BookAuthors
+
+CREATE TABLE book_authors
 (
     book_id   INT,
     author_id INT,
     PRIMARY KEY (book_id, author_id),
     CONSTRAINT fk_ba_book FOREIGN KEY (book_id)
-        REFERENCES Book (book_id) ON DELETE CASCADE,
+        REFERENCES book (book_id) ON DELETE CASCADE,
     CONSTRAINT fk_ba_author FOREIGN KEY (author_id)
-        REFERENCES Author (author_id) ON DELETE CASCADE
+        REFERENCES author (author_id) ON DELETE CASCADE
 );
-CREATE TABLE Category
+
+CREATE TABLE category
 (
     category_id INT AUTO_INCREMENT PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     parent_id   INT,
     CONSTRAINT fk_category_parent FOREIGN KEY (parent_id)
-        REFERENCES Category (category_id)
+        REFERENCES category (category_id)
         ON DELETE SET NULL
 );
-CREATE TABLE BookCategories
+
+CREATE TABLE book_categories
 (
     book_id     INT,
     category_id INT,
     PRIMARY KEY (book_id, category_id),
     CONSTRAINT fk_bc_book FOREIGN KEY (book_id)
-        REFERENCES Book (book_id) ON DELETE CASCADE,
+        REFERENCES book (book_id) ON DELETE CASCADE,
     CONSTRAINT fk_bc_category FOREIGN KEY (category_id)
-        REFERENCES Category (category_id) ON DELETE CASCADE
+        REFERENCES category (category_id) ON DELETE CASCADE
 );
-CREATE TABLE Member
+
+CREATE TABLE member
 (
     member_id       INT AUTO_INCREMENT PRIMARY KEY,
     name            VARCHAR(255)        NOT NULL,
@@ -64,7 +70,8 @@ CREATE TABLE Member
     membership_date DATE                NOT NULL,
     status          ENUM('ACTIVE', 'SUSPENDED') DEFAULT 'ACTIVE'
 );
-CREATE TABLE SystemUser
+
+CREATE TABLE system_user
 (
     user_id  INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
@@ -72,22 +79,25 @@ CREATE TABLE SystemUser
     email    VARCHAR(255) UNIQUE NOT NULL,
     status   ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE'
 );
-CREATE TABLE Role
+
+CREATE TABLE role
 (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     name    VARCHAR(100) UNIQUE NOT NULL
 );
-CREATE TABLE UserRoles
+
+CREATE TABLE user_roles
 (
     user_id INT,
     role_id INT,
     PRIMARY KEY (user_id, role_id),
     CONSTRAINT fk_ur_user FOREIGN KEY (user_id)
-        REFERENCES SystemUser (user_id) ON DELETE CASCADE,
+        REFERENCES system_user (user_id) ON DELETE CASCADE,
     CONSTRAINT fk_ur_role FOREIGN KEY (role_id)
-        REFERENCES Role (role_id) ON DELETE CASCADE
+        REFERENCES role (role_id) ON DELETE CASCADE
 );
-CREATE TABLE BorrowTransaction
+
+CREATE TABLE borrow_transaction
 (
     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
     member_id      INT  NOT NULL,
@@ -96,11 +106,12 @@ CREATE TABLE BorrowTransaction
     return_date    DATE NULL,
     status         ENUM('BORROWED', 'RETURNED') DEFAULT 'BORROWED',
     CONSTRAINT fk_bt_member FOREIGN KEY (member_id)
-        REFERENCES Member (member_id) ON DELETE CASCADE,
+        REFERENCES member (member_id) ON DELETE CASCADE,
     CONSTRAINT fk_bt_user FOREIGN KEY (user_id)
-        REFERENCES SystemUser (user_id) ON DELETE SET NULL
+        REFERENCES system_user (user_id) ON DELETE SET NULL
 );
-CREATE TABLE BorrowedBooks
+
+CREATE TABLE borrowed_books
 (
     transaction_id      INT,
     book_id             INT,
@@ -108,17 +119,18 @@ CREATE TABLE BorrowedBooks
     condition_on_return ENUM('New', 'Good', 'Fair', 'Damaged', 'Lost') NOT NULL,
     PRIMARY KEY (transaction_id, book_id),
     CONSTRAINT fk_bb_transaction FOREIGN KEY (transaction_id)
-        REFERENCES BorrowTransaction (transaction_id) ON DELETE CASCADE,
+        REFERENCES borrow_transaction (transaction_id) ON DELETE CASCADE,
     CONSTRAINT fk_bb_book FOREIGN KEY (book_id)
-        REFERENCES Book (book_id) ON DELETE CASCADE
+        REFERENCES book (book_id) ON DELETE CASCADE
 );
-CREATE TABLE UserActivityLog
+
+CREATE TABLE user_activity_log
 (
     log_id    INT AUTO_INCREMENT PRIMARY KEY,
     user_id   INT          NOT NULL,
     action    VARCHAR(255) NOT NULL,
-    details   TEXT,
+    details   json      DEFAULT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_log_user FOREIGN KEY (user_id)
-        REFERENCES SystemUser (user_id) ON DELETE CASCADE
+        REFERENCES system_user (user_id) ON DELETE CASCADE
 );

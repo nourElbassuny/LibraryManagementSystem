@@ -1,12 +1,8 @@
 package com.code81.LibraryManagementSystem.dto;
 
-import com.code81.LibraryManagementSystem.entity.Publisher;
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 import java.util.List;
+import java.util.Set;
 
 public record BookResponse(
         Integer bookId,
@@ -17,7 +13,11 @@ public record BookResponse(
         String language,
         String summary,
         String coverImageUrl,
-        String publisherName
+        String publisherName,
+        List<String> authors,
+        List<String> categories,
+        Boolean available,          // new field
+        String condition
 ) {}
 
 

@@ -1,17 +1,14 @@
-package com.code81.LibraryManagementSystem;
+package com.code81.LibraryManagementSystem.entity;
 
-import com.code81.LibraryManagementSystem.entity.BorrowTransaction;
 import com.code81.LibraryManagementSystem.entity.Enum.BookCondition;
 import jakarta.persistence.*;
 import lombok.*;
 
-import com.code81.LibraryManagementSystem.entity.Books;
-
-
 
 @Entity
 @Table(name = "BorrowedBooks")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,13 +24,11 @@ public class BorrowedBook {
     @ManyToOne
     @MapsId("bookId")
     @JoinColumn(name = "book_id")
-    private Books book;
+    private Book book;
 
     @Enumerated(EnumType.STRING)
     private BookCondition conditionOnBorrow;
 
     @Enumerated(EnumType.STRING)
     private BookCondition conditionOnReturn;
-
-
 }

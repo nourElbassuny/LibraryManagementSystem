@@ -20,7 +20,7 @@ The system includes the following key functionalities:
 ## 🛠️ Technology Stack
 
 -   **Backend**: Java 17, Spring Boot
--   **Database**: PostgreSQL
+-   **Database**: MySQL
 -   **API Documentation/Testing**: Postman
 
 ---
@@ -65,7 +65,7 @@ The API follows **RESTful principles**, using standard HTTP methods (`GET`, `POS
 -   **Authorization**: A custom **role-based access control (RBAC)** mechanism is in place.
     -   **`ADMINISTRATOR`**: Full access to all endpoints, including user management.
     -   **`LIBRARIAN`**: Can manage books, members, and borrowing transactions.
-    -   **`STAFF`**: Can view books and members but has limited modification rights.
+    -   **`STAFF`**: Can view books category
 -   User passwords are never stored in plain text.
 
 ---
@@ -175,22 +175,24 @@ The system comes with pre-configured users for testing:
 ### Prerequisites
 - Java 17 or higher
 - Maven 3.6+
-- PostgreSQL 12+
+- MySQL 
 
 ### Installation & Setup
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone <[repository-url](https://github.com/nourElbassuny/LibraryManagementSystem.git)>
    cd library-management-system
    ```
 
 2. **Configure database**
    ```properties
    # application.properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/library_db
+   spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+   spring.datasource.url=jdbc:mysql://localhost:3305/library_schema?createDatabaseIfNotExist=true
    spring.datasource.username=your_username
    spring.datasource.password=your_password
+   spring.jpa.hibernate.ddl-auto=update
    ```
 
 3. **Run the application**
@@ -199,7 +201,7 @@ The system comes with pre-configured users for testing:
    ```
 
 4. **Access the API**
-   - Main application: http://localhost:8080
+   - Main application: http://localhost:8084
    - API documentation available via Postman collection
 
 ### Database Initialization
@@ -207,19 +209,5 @@ The application will automatically create the database schema on first run. Samp
 
 ---
 
-## 🔐 Security Implementation
 
-- **Password Hashing**: BCrypt with strength 12
-- **Role-Based Authorization**: Method-level security annotations
-- **SQL Injection Prevention**: Parameterized queries via Spring Data JPA
-- **Input Validation**: Comprehensive request validation
 
----
-
-## 📧 Contact
-
-For questions about this implementation, please contact the development team at CODE81.
-
----
-
-**Thank you for reviewing my Library Management System implementation!**

@@ -10,9 +10,12 @@ import java.util.Set;
 @Table(name = "roles")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

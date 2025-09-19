@@ -1,10 +1,9 @@
-package com.code81.LibraryManagementSystem.dto;
+package com.code81.LibraryManagementSystem.dto.request;
 
 import com.code81.LibraryManagementSystem.entity.Enum.BookCondition;
 
-public record BorrowedBookResponse(
+public record BorrowedBookRequest(
         Integer bookId,
-        String bookTitle,
         BookCondition conditionOnBorrow,
         BookCondition conditionOnReturn
 ) {}

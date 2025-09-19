@@ -1,136 +1,149 @@
-CREATE TABLE publisher
-(
-    publisher_id INT AUTO_INCREMENT PRIMARY KEY,
-    name         VARCHAR(100) NOT NULL,
-    address      VARCHAR(255)
-);
+-- Create database
+CREATE
+DATABASE IF NOT EXISTS library_schema;
+USE
+library_schema;
 
-CREATE TABLE book
-(
-    book_id          INT AUTO_INCREMENT PRIMARY KEY,
-    title            VARCHAR(255) NOT NULL,
-    isbn             VARCHAR(20) UNIQUE,
-    edition          VARCHAR(50),
-    publication_year INT,
-    language         VARCHAR(50),
-    summary          TEXT,
-    cover_image_url  VARCHAR(255),
-    publisher_id     INT,
-    CONSTRAINT fk_book_publisher FOREIGN KEY (publisher_id)
-        REFERENCES publisher (publisher_id)
-        ON DELETE SET NULL
-);
-
+-- Author table
 CREATE TABLE author
 (
-    author_id INT AUTO_INCREMENT PRIMARY KEY,
-    name      VARCHAR(255) NOT NULL,
-    bio       TEXT
-);
+    author_id INT NOT NULL AUTO_INCREMENT,
+    bio       TEXT,
+    name      VARCHAR(255),
+    PRIMARY KEY (author_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE book_authors
+-- Publisher table
+CREATE TABLE publisher
 (
-    book_id   INT,
-    author_id INT,
-    PRIMARY KEY (book_id, author_id),
-    CONSTRAINT fk_ba_book FOREIGN KEY (book_id)
-        REFERENCES book (book_id) ON DELETE CASCADE,
-    CONSTRAINT fk_ba_author FOREIGN KEY (author_id)
-        REFERENCES author (author_id) ON DELETE CASCADE
-);
+    publisher_id INT NOT NULL AUTO_INCREMENT,
+    address      VARCHAR(255),
+    name         VARCHAR(255),
+    PRIMARY KEY (publisher_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Book table
+CREATE TABLE book
+(
+    book_id          INT NOT NULL AUTO_INCREMENT,
+    cover_image_url  VARCHAR(255),
+    edition          VARCHAR(255),
+    isbn             VARCHAR(255),
+    language         VARCHAR(255),
+    publication_year INT,
+    summary          TEXT,
+    title            VARCHAR(255),
+    publisher_id     INT,
+    PRIMARY KEY (book_id),
+    CONSTRAINT fk_book_publisher FOREIGN KEY (publisher_id) REFERENCES publisher (publisher_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Category table
 CREATE TABLE category
 (
-    category_id INT AUTO_INCREMENT PRIMARY KEY,
-    name        VARCHAR(255) NOT NULL,
+    category_id INT NOT NULL AUTO_INCREMENT,
+    name        VARCHAR(255),
     parent_id   INT,
-    CONSTRAINT fk_category_parent FOREIGN KEY (parent_id)
-        REFERENCES category (category_id)
-        ON DELETE SET NULL
-);
+    PRIMARY KEY (category_id),
+    CONSTRAINT fk_category_parent FOREIGN KEY (parent_id) REFERENCES category (category_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE book_categories
+-- Book-Author join table
+CREATE TABLE book_author
 (
-    book_id     INT,
-    category_id INT,
-    PRIMARY KEY (book_id, category_id),
-    CONSTRAINT fk_bc_book FOREIGN KEY (book_id)
-        REFERENCES book (book_id) ON DELETE CASCADE,
-    CONSTRAINT fk_bc_category FOREIGN KEY (category_id)
-        REFERENCES category (category_id) ON DELETE CASCADE
-);
+    book_id   INT NOT NULL,
+    author_id INT NOT NULL,
+    PRIMARY KEY (book_id, author_id),
+    CONSTRAINT fk_book_author_book FOREIGN KEY (book_id) REFERENCES book (book_id),
+    CONSTRAINT fk_book_author_author FOREIGN KEY (author_id) REFERENCES author (author_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Book-Category join table
+CREATE TABLE book_category
+(
+    book_id     INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (book_id, category_id),
+    CONSTRAINT fk_book_category_book FOREIGN KEY (book_id) REFERENCES book (book_id),
+    CONSTRAINT fk_book_category_category FOREIGN KEY (category_id) REFERENCES category (category_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Member table
 CREATE TABLE member
 (
-    member_id       INT AUTO_INCREMENT PRIMARY KEY,
-    name            VARCHAR(255)        NOT NULL,
-    email           VARCHAR(255) UNIQUE NOT NULL,
-    phone           VARCHAR(50),
+    member_id       INT NOT NULL AUTO_INCREMENT,
     address         VARCHAR(255),
-    membership_date DATE                NOT NULL,
-    status          ENUM('ACTIVE', 'SUSPENDED') DEFAULT 'ACTIVE'
-);
+    email           VARCHAR(255) UNIQUE,
+    membership_date DATE,
+    name            VARCHAR(255),
+    phone           VARCHAR(255),
+    status          ENUM('ACTIVE', 'SUSPENDED'),
+    PRIMARY KEY (member_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE system_user
+-- Users table
+CREATE TABLE users
 (
-    user_id  INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255)        NOT NULL,
-    email    VARCHAR(255) UNIQUE NOT NULL,
-    status   ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE'
-);
+    id       INT          NOT NULL AUTO_INCREMENT,
+    email    VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    status   ENUM('ACTIVE', 'INACTIVE'),
+    username VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE role
+-- Roles table
+CREATE TABLE roles
 (
-    role_id INT AUTO_INCREMENT PRIMARY KEY,
-    name    VARCHAR(100) UNIQUE NOT NULL
-);
+    id   INT          NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- User-Roles join table
 CREATE TABLE user_roles
 (
-    user_id INT,
-    role_id INT,
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
     PRIMARY KEY (user_id, role_id),
-    CONSTRAINT fk_ur_user FOREIGN KEY (user_id)
-        REFERENCES system_user (user_id) ON DELETE CASCADE,
-    CONSTRAINT fk_ur_role FOREIGN KEY (role_id)
-        REFERENCES role (role_id) ON DELETE CASCADE
-);
+    CONSTRAINT fk_user_roles_user FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT fk_user_roles_role FOREIGN KEY (role_id) REFERENCES roles (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Borrow Transaction table
 CREATE TABLE borrow_transaction
 (
-    transaction_id INT AUTO_INCREMENT PRIMARY KEY,
-    member_id      INT  NOT NULL,
-    user_id        INT,
-    borrow_date    DATE NOT NULL,
-    return_date    DATE NULL,
-    status         ENUM('BORROWED', 'RETURNED') DEFAULT 'BORROWED',
-    CONSTRAINT fk_bt_member FOREIGN KEY (member_id)
-        REFERENCES member (member_id) ON DELETE CASCADE,
-    CONSTRAINT fk_bt_user FOREIGN KEY (user_id)
-        REFERENCES system_user (user_id) ON DELETE SET NULL
-);
+    transaction_id INT NOT NULL AUTO_INCREMENT,
+    borrow_date    DATE,
+    return_date    DATE,
+    status         ENUM('BORROWED', 'RETURNED'),
+    member_id      INT NOT NULL,
+    user_id        INT NOT NULL,
+    PRIMARY KEY (transaction_id),
+    CONSTRAINT fk_transaction_member FOREIGN KEY (member_id) REFERENCES member (member_id),
+    CONSTRAINT fk_transaction_user FOREIGN KEY (user_id) REFERENCES users (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Borrowed Books table
 CREATE TABLE borrowed_books
 (
-    transaction_id      INT,
-    book_id             INT,
-    condition_on_borrow ENUM('New', 'Good', 'Fair', 'Damaged') NOT NULL,
-    condition_on_return ENUM('New', 'Good', 'Fair', 'Damaged', 'Lost') NOT NULL,
-    PRIMARY KEY (transaction_id, book_id),
-    CONSTRAINT fk_bb_transaction FOREIGN KEY (transaction_id)
-        REFERENCES borrow_transaction (transaction_id) ON DELETE CASCADE,
-    CONSTRAINT fk_bb_book FOREIGN KEY (book_id)
-        REFERENCES book (book_id) ON DELETE CASCADE
-);
+    condition_on_borrow ENUM('DAMAGED', 'FAIR', 'GOOD', 'LOST', 'NEW'),
+    condition_on_return ENUM('DAMAGED', 'FAIR', 'GOOD', 'LOST', 'NEW'),
+    book_id             INT NOT NULL,
+    transaction_id      INT NOT NULL,
+    PRIMARY KEY (book_id, transaction_id),
+    CONSTRAINT fk_borrowed_books_book FOREIGN KEY (book_id) REFERENCES book (book_id),
+    CONSTRAINT fk_borrowed_books_transaction FOREIGN KEY (transaction_id) REFERENCES borrow_transaction (transaction_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+-- User Activity Log table
 CREATE TABLE user_activity_log
 (
-    log_id    INT AUTO_INCREMENT PRIMARY KEY,
-    user_id   INT          NOT NULL,
-    action    VARCHAR(255) NOT NULL,
-    details   json      DEFAULT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_log_user FOREIGN KEY (user_id)
-        REFERENCES system_user (user_id) ON DELETE CASCADE
-);
+    log_id    INT NOT NULL AUTO_INCREMENT,
+    action    VARCHAR(255),
+    timestamp DATETIME(6),
+    user_id   INT NOT NULL,
+    PRIMARY KEY (log_id),
+    CONSTRAINT fk_log_user FOREIGN KEY (user_id) REFERENCES users (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

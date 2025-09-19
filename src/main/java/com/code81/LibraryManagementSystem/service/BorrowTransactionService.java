@@ -1,9 +1,9 @@
 package com.code81.LibraryManagementSystem.service;
 
-import com.code81.LibraryManagementSystem.dto.BorrowTransactionRequest;
-import com.code81.LibraryManagementSystem.dto.BorrowTransactionResponse;
-import com.code81.LibraryManagementSystem.dto.BorrowedBookRequest;
-import com.code81.LibraryManagementSystem.dto.BorrowedBookResponse;
+import com.code81.LibraryManagementSystem.dto.request.BorrowTransactionRequest;
+import com.code81.LibraryManagementSystem.dto.response.BorrowTransactionResponse;
+import com.code81.LibraryManagementSystem.dto.request.BorrowedBookRequest;
+import com.code81.LibraryManagementSystem.dto.response.BorrowedBookResponse;
 import com.code81.LibraryManagementSystem.entity.*;
 import com.code81.LibraryManagementSystem.repository.BookRepository;
 import com.code81.LibraryManagementSystem.repository.BorrowTransactionRepository;
@@ -25,6 +25,7 @@ public class BorrowTransactionService {
     private final MemberRepository memberRepository;
     private final SystemUserRepository userRepository;
     private final BookRepository bookRepository;
+    private final UserActivityLogService userActivityLogService;
 
     @Transactional
     public BorrowTransactionResponse createTransaction(BorrowTransactionRequest request) {
@@ -64,10 +65,14 @@ public class BorrowTransactionService {
                     .build();
 
             transaction.getBorrowedBooks().add(borrowedBook);
+
+            userActivityLogService.getLogsByUsername("BORROWED_BOOK: With book title" + book.getTitle());
         }
 
 
         transaction = transactionRepository.save(transaction);
+
+
 
         return mapToResponse(transaction);
     }
@@ -113,6 +118,7 @@ public class BorrowTransactionService {
 
                 borrowedBook.setConditionOnBorrow(bookReq.conditionOnBorrow());
                 borrowedBook.setConditionOnReturn(bookReq.conditionOnReturn());
+                userActivityLogService.saveLogAction( "updating book transaction with book id : " + borrowedBook.getBook().getTitle());
             }
         }
 
@@ -134,6 +140,7 @@ public class BorrowTransactionService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
 
     private BorrowTransactionResponse mapToResponse(BorrowTransaction transaction) {
         List<BorrowedBookResponse> borrowedBooks = transaction.getBorrowedBooks().stream()

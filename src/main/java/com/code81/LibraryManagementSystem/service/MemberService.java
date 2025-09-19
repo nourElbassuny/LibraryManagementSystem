@@ -1,7 +1,7 @@
 package com.code81.LibraryManagementSystem.service;
 
-import com.code81.LibraryManagementSystem.dto.MemberRequest;
-import com.code81.LibraryManagementSystem.dto.MemberResponse;
+import com.code81.LibraryManagementSystem.dto.request.MemberRequest;
+import com.code81.LibraryManagementSystem.dto.response.MemberResponse;
 import com.code81.LibraryManagementSystem.entity.Enum.MemberStatus;
 import com.code81.LibraryManagementSystem.entity.Member;
 import com.code81.LibraryManagementSystem.repository.MemberRepository;
@@ -16,7 +16,7 @@ import java.util.List;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
+    private final UserActivityLogService userActivityLogService;
 
     public MemberResponse createMember(MemberRequest request) {
         Member member = Member.builder()
@@ -29,6 +29,7 @@ public class MemberService {
                 .build();
 
         Member saved = memberRepository.save(member);
+        userActivityLogService.saveLogAction("Adding new member with id "+saved.getMemberId()+ " and member name "+saved.getName());
         return mapToMemberResponse(saved);
     }
 
@@ -59,6 +60,8 @@ public class MemberService {
         member.setStatus(MemberStatus.valueOf(request.status()));
 
         Member updated = memberRepository.save(member);
+        userActivityLogService.saveLogAction("Updating new member with id "+updated.getMemberId()+ " and member name "+updated.getName());
+
         return mapToMemberResponse(updated);
     }
 
@@ -66,6 +69,8 @@ public class MemberService {
     public void deleteMember(Integer memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found with id " + memberId));
+        userActivityLogService.saveLogAction("Deleting new member with id "+member.getMemberId()+ " and member name "+member.getName());
+
         memberRepository.delete(member);
     }
 

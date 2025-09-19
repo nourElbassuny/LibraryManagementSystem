@@ -1,7 +1,7 @@
 package com.code81.LibraryManagementSystem.service;
 
-import com.code81.LibraryManagementSystem.dto.CategoryRequest;
-import com.code81.LibraryManagementSystem.dto.CategoryResponse;
+import com.code81.LibraryManagementSystem.dto.request.CategoryRequest;
+import com.code81.LibraryManagementSystem.dto.response.CategoryResponse;
 import com.code81.LibraryManagementSystem.entity.Category;
 import com.code81.LibraryManagementSystem.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +15,7 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final UserActivityLogService userActivityLogService;
 
     public CategoryResponse createCategory(CategoryRequest request) {
         Category category = new Category();
@@ -28,48 +29,48 @@ public class CategoryService {
 
         Category saved = categoryRepository.save(category);
 
+        userActivityLogService.saveLogAction("Adding category " + saved.getName());
         return mapToCategoryResponse(saved);
 
     }
+
     public List<CategoryResponse> getAllCategories() {
         return categoryRepository.findAll().stream()
                 .map(this::mapToCategoryResponse).toList();
 
     }
 
-        @Transactional
-        public CategoryResponse updateCategory(Integer categoryId, CategoryRequest request) {
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new RuntimeException("Category not found with id " + categoryId));
+    @Transactional
+    public CategoryResponse updateCategory(Integer categoryId, CategoryRequest request) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with id " + categoryId));
 
-            category.setName(request.name());
+        category.setName(request.name());
 
 
+        Category updated = categoryRepository.save(category);
 
-            Category updated = categoryRepository.save(category);
+        userActivityLogService.saveLogAction("Updating category " + updated.getName());
 
-            return mapToCategoryResponse(updated);
+        return mapToCategoryResponse(updated);
+    }
+
+
+    @Transactional
+    public void deleteCategory(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with id " + categoryId));
+
+
+        if (category.getBooks() != null) {
+            category.getBooks().forEach(book -> book.getCategories().remove(category));
         }
-
-
-        @Transactional
-        public void deleteCategory(Integer categoryId) {
-            Category category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new RuntimeException("Category not found with id " + categoryId));
-
-
-
-
-
-            if (category.getBooks() != null) {
-                category.getBooks().forEach(book -> book.getCategories().remove(category));
-            }
-
-            categoryRepository.delete(category);
-        }
+        userActivityLogService.saveLogAction("Deleting category " + category.getName());
+        categoryRepository.delete(category);
+    }
 
     private CategoryResponse mapToCategoryResponse(Category category) {
-       return new CategoryResponse(
+        return new CategoryResponse(
                 category.getCategoryId(),
                 category.getName(),
                 category.getParent() != null ? category.getParent().getCategoryId() : null

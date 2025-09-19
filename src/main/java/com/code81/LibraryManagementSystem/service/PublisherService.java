@@ -14,11 +14,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PublisherService {
     private final PublisherRepository publisherRepository;
+    private final UserActivityLogService userActivityLogService;
+
 
     public PublisherDTO getPublisherById(Integer id) {
         Publisher publisher = publisherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Publisher not found"));
-
         return mapTO(publisher);
     }
 
@@ -35,6 +36,8 @@ public class PublisherService {
         publisher.setAddress(updatePublisher.address());
 
         Publisher saved = publisherRepository.save(publisher);
+
+        userActivityLogService.saveLogAction("Updating publisher " + publisherId + " with name " + updatePublisher.name());
         return mapTO(saved);
     }
 
@@ -42,9 +45,8 @@ public class PublisherService {
         Publisher publisher = new Publisher();
         publisher.setName(publisherDTO.name());
         publisher.setAddress(publisherDTO.address());
-
         Publisher saved = publisherRepository.save(publisher);
-
+        userActivityLogService.saveLogAction("Creating new publisher wit publisher id" +publisherDTO.id()+" with name " + publisherDTO.name() );
         return mapTO(saved);
     }
 
@@ -63,11 +65,9 @@ public class PublisherService {
     public void deletePublisher(Integer id) {
         Publisher publisher = publisherRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Publisher not found"));
-
         publisher.getBooks().forEach(book -> book.setPublisher(null));
-
         publisherRepository.delete(publisher);
-
+        userActivityLogService.saveLogAction("Deleting publisher " + id + " with name " + publisher.getName());
 
     }
 }

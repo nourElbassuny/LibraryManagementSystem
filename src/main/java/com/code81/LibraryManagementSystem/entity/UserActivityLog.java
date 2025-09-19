@@ -25,9 +25,5 @@ public class UserActivityLog {
 
     private String action;
 
-    @Lob
-    @Column(columnDefinition = "JSON")
-    private String details;
-
     private LocalDateTime timestamp;
 }

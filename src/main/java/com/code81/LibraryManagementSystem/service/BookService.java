@@ -1,7 +1,7 @@
 package com.code81.LibraryManagementSystem.service;
 
-import com.code81.LibraryManagementSystem.dto.*;
-
+import com.code81.LibraryManagementSystem.dto.request.BookRequest;
+import com.code81.LibraryManagementSystem.dto.response.BookResponse;
 import com.code81.LibraryManagementSystem.entity.Author;
 import com.code81.LibraryManagementSystem.entity.Book;
 
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -28,7 +27,30 @@ public class BookService {
     private final BookRepository bookRepository;
     private final PublisherRepository publisherRepository;
     private final AuthorRepository authorRepository;
-    public final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final UserActivityLogService userActivityLogService;
+
+    public BookResponse findBookByTitle(String title) {
+        Book book = bookRepository.findByTitle(title)
+                .orElseThrow(() -> new RuntimeException("Book not found with title: " + title));
+        return mapToBookResponse(book);
+    }
+
+    public List<BookResponse> findBookByCategoryName(String categoryName) {
+        List<Book> books = bookRepository.findByCategory(categoryName);
+        if (books.isEmpty()) {
+            throw new RuntimeException("No books found in category: " + categoryName);
+        }
+        return books.stream().map(this::mapToBookResponse).collect(Collectors.toList());
+    }
+
+    public List<BookResponse> findBookByAuthor(String authorName) {
+        List<Book> books = bookRepository.findByAuthor(authorName);
+        if (books.isEmpty()) {
+            throw new RuntimeException("No books found by author: " + authorName);
+        }
+        return books.stream().map(this::mapToBookResponse).collect(Collectors.toList());
+    }
 
     public List<BookResponse> getAllBooks() {
         return bookRepository.findAll()
@@ -63,6 +85,7 @@ public class BookService {
 
 
         Book saved = bookRepository.save(book);
+        userActivityLogService.saveLogAction("Adding new books with book id "+saved.getId()+" and book title"+saved.getTitle());
         return mapToBookResponse(saved);
     }
 
@@ -77,6 +100,7 @@ public class BookService {
                 .orElseThrow(() -> new RuntimeException("Book not found with id " + bookId));
 
         bookRepository.delete(book);
+        userActivityLogService.saveLogAction("Deleting a book with id "+bookId+" and book title"+book.getTitle());
     }
 
     @Transactional
@@ -112,6 +136,7 @@ public class BookService {
         }
 
         Book updated = bookRepository.save(book);
+        userActivityLogService.saveLogAction("Updating a book with id "+bookId+" and book title"+book.getTitle());
         return mapToBookResponse(updated);
     }
 

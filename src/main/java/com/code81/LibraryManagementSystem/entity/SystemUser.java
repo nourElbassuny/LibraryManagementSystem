@@ -30,7 +30,7 @@ public class SystemUser {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER) // 🔑 load roles immediately
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

@@ -1,7 +1,7 @@
 package com.code81.LibraryManagementSystem.controllers;
 
-import com.code81.LibraryManagementSystem.dto.CategoryRequest;
-import com.code81.LibraryManagementSystem.dto.CategoryResponse;
+import com.code81.LibraryManagementSystem.dto.request.CategoryRequest;
+import com.code81.LibraryManagementSystem.dto.response.CategoryResponse;
 import com.code81.LibraryManagementSystem.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

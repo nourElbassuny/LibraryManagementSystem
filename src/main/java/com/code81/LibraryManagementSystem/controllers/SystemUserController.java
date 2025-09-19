@@ -1,8 +1,7 @@
 package com.code81.LibraryManagementSystem.controllers;
 
-import com.code81.LibraryManagementSystem.dto.SystemUserRequest;
-import com.code81.LibraryManagementSystem.dto.SystemUserResponse;
-import com.code81.LibraryManagementSystem.entity.SystemUser;
+import com.code81.LibraryManagementSystem.dto.request.SystemUserRequest;
+import com.code81.LibraryManagementSystem.dto.response.SystemUserResponse;
 import com.code81.LibraryManagementSystem.service.SystemUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

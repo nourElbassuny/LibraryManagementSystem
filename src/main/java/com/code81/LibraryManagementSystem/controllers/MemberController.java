@@ -1,7 +1,7 @@
 package com.code81.LibraryManagementSystem.controllers;
 
-import com.code81.LibraryManagementSystem.dto.MemberRequest;
-import com.code81.LibraryManagementSystem.dto.MemberResponse;
+import com.code81.LibraryManagementSystem.dto.request.MemberRequest;
+import com.code81.LibraryManagementSystem.dto.response.MemberResponse;
 import com.code81.LibraryManagementSystem.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

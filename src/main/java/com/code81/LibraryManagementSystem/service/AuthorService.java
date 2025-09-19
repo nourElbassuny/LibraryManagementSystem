@@ -1,8 +1,8 @@
 package com.code81.LibraryManagementSystem.service;
 
 
-import com.code81.LibraryManagementSystem.dto.AuthorRequest;
-import com.code81.LibraryManagementSystem.dto.AuthorResponse;
+import com.code81.LibraryManagementSystem.dto.request.AuthorRequest;
+import com.code81.LibraryManagementSystem.dto.response.AuthorResponse;
 import com.code81.LibraryManagementSystem.entity.Author;
 import com.code81.LibraryManagementSystem.entity.Book;
 import com.code81.LibraryManagementSystem.repository.AuthorRepository;
@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthorService {
     private final AuthorRepository authorRepository;
-
+    private final UserActivityLogService userActivityLogService;
 
     public AuthorResponse createAuthor(AuthorRequest request) {
         Author author = new Author();
@@ -29,7 +27,10 @@ public class AuthorService {
 
         Author saved = authorRepository.save(author);
 
-        return mapToAuthor(saved);
+        AuthorResponse toAuthor= mapToAuthor(saved);
+        userActivityLogService.saveLogAction("Added new Author with name"+author.getName());
+
+        return toAuthor;
     }
 
     public AuthorResponse getAuthorById(Integer id) {
@@ -57,6 +58,8 @@ public class AuthorService {
                 .map(Book::getTitle)
                 .collect(Collectors.toSet());
 
+        userActivityLogService.saveLogAction("Updated Author with id " + authorId);
+
         return new AuthorResponse(
                 updated.getId(),
                 updated.getName(),
@@ -70,6 +73,7 @@ public class AuthorService {
                 .orElseThrow(() -> new RuntimeException("Author not found with id " + authorId));
         author.getBooks().forEach(book -> book.getAuthors().remove(author));
         authorRepository.delete(author);
+        userActivityLogService.saveLogAction("Deleted Author with id " + authorId+"and author name is"+author.getName());
     }
 
     private AuthorResponse mapToAuthor(Author author) {

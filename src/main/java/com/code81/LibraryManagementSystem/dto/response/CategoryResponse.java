@@ -1,4 +1,4 @@
-package com.code81.LibraryManagementSystem.dto;
+package com.code81.LibraryManagementSystem.dto.response;
 
 public record CategoryResponse(
         Integer categoryId,

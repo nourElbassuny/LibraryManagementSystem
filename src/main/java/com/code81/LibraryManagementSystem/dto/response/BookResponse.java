@@ -1,8 +1,7 @@
-package com.code81.LibraryManagementSystem.dto;
+package com.code81.LibraryManagementSystem.dto.response;
 
 
 import java.util.List;
-import java.util.Set;
 
 public record BookResponse(
         Integer bookId,

@@ -1,8 +1,8 @@
 package com.code81.LibraryManagementSystem.controllers;
 
 
-import com.code81.LibraryManagementSystem.dto.BookRequest;
-import com.code81.LibraryManagementSystem.dto.BookResponse;
+import com.code81.LibraryManagementSystem.dto.request.BookRequest;
+import com.code81.LibraryManagementSystem.dto.response.BookResponse;
 import com.code81.LibraryManagementSystem.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
+
+    @GetMapping("/title/{title}")
+    public BookResponse getBookByTitle(@PathVariable String title) {
+        return bookService.findBookByTitle(title);
+    }
+
+    @GetMapping("/category/{categoryName}")
+    public List<BookResponse> getBooksByCategory(@PathVariable String categoryName) {
+        return bookService.findBookByCategoryName(categoryName);
+    }
+
+    @GetMapping("/author/{authorName}")
+    public List<BookResponse> getBooksByAuthor(@PathVariable String authorName) {
+        return bookService.findBookByAuthor(authorName);
+    }
 
     @GetMapping
     public ResponseEntity<List<BookResponse>> getBooks() {

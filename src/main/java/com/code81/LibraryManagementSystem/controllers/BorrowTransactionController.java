@@ -1,7 +1,7 @@
 package com.code81.LibraryManagementSystem.controllers;
 
-import com.code81.LibraryManagementSystem.dto.BorrowTransactionRequest;
-import com.code81.LibraryManagementSystem.dto.BorrowTransactionResponse;
+import com.code81.LibraryManagementSystem.dto.request.BorrowTransactionRequest;
+import com.code81.LibraryManagementSystem.dto.response.BorrowTransactionResponse;
 import com.code81.LibraryManagementSystem.service.BorrowTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

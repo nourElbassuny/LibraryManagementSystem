@@ -42,8 +42,12 @@ The database is designed with a **relational model** to ensure data integrity an
 -   **`user_roles` (join table)**: Connects users to their respective roles.
 -   **`transactions` table**: Tracks borrowing and return activities, including transaction date, due date, and return status.
 -   **`activity_logs` table**: Stores a log of user actions.
-
+### **ERD**
 ![Entity-Relationship Diagram (ERD)](https://github.com/user-attachments/assets/ecc5b5fe-71e0-473e-bef1-5773d55fa4c0)
+
+### **Relational Mapping**
+![Relational Mapping](https://github.com/user-attachments/assets/2585fac7-54b0-4420-8a5e-695eb36af6f5)
+
 
 ### **API Endpoints (RESTful Design)**
 
@@ -70,9 +74,3 @@ The API follows **RESTful principles**, using standard HTTP methods (`GET`, `POS
 
 -   `schema.sql`: Contains the SQL scripts to create all necessary tables and define relationships.
 -   `data.sql`: Includes sample data to populate the tables, making it easy to test the application immediately after setup. This includes sample books, members, and users with different roles.
-
----
-
-## 🧪 Postman Collection
-
-A Postman collection is included in the project repository. It provides pre-configured requests to test all API endpoints, including authentication, CRUD operations, and borrowing/return flows. This makes it simple to verify the functionality of the system.

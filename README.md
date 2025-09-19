@@ -42,20 +42,16 @@ The database is designed with a **relational model** to ensure data integrity an
 -   **`user_roles` (join table)**: Connects users to their respective roles.
 -   **`transactions` table**: Tracks borrowing and return activities, including transaction date, due date, and return status.
 -   **`activity_logs` table**: Stores a log of user actions.
-<<<<<<< HEAD
-=======
 
->>>>>>> 3617eff4ad315391e279fe2c28d3f9ccf71332d7
+
+
 ### **ERD**
 ![Entity-Relationship Diagram (ERD)](https://github.com/user-attachments/assets/ecc5b5fe-71e0-473e-bef1-5773d55fa4c0)
 
 ### **Relational Mapping**
 ![Relational Mapping](https://github.com/user-attachments/assets/2585fac7-54b0-4420-8a5e-695eb36af6f5)
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 3617eff4ad315391e279fe2c28d3f9ccf71332d7
 ### **API Endpoints (RESTful Design)**
 
 The API follows **RESTful principles**, using standard HTTP methods (`GET`, `POST`, `PUT`, `DELETE`) to perform CRUD operations on resources. Resources are identified by clear, pluralized URIs.
@@ -219,5 +215,3 @@ The application will automatically create the database schema on first run. Samp
 ---
 
 
-
->>>>>>> 3617eff4ad315391e279fe2c28d3f9ccf71332d7

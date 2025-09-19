@@ -43,7 +43,11 @@ The database is designed with a **relational model** to ensure data integrity an
 -   **`transactions` table**: Tracks borrowing and return activities, including transaction date, due date, and return status.
 -   **`activity_logs` table**: Stores a log of user actions.
 
+### **ERD**
 ![Entity-Relationship Diagram (ERD)](https://github.com/user-attachments/assets/ecc5b5fe-71e0-473e-bef1-5773d55fa4c0)
+
+### **Relational Mapping**
+![Relational Mapping](https://github.com/user-attachments/assets/2585fac7-54b0-4420-8a5e-695eb36af6f5)
 
 ### **API Endpoints (RESTful Design)**
 
@@ -66,6 +70,81 @@ The API follows **RESTful principles**, using standard HTTP methods (`GET`, `POS
 
 ---
 
+## 📋 API Endpoints
+
+### Authentication
+All endpoints require Basic Authentication unless otherwise noted.
+
+### Author Management
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/authors` | Get all authors | All Roles |
+| POST | `/api/authors` | Create a new author | Admin, Librarian |
+| GET | `/api/authors/{id}` | Get author by ID | All Roles |
+| PUT | `/api/authors/{id}` | Update an author | Admin, Librarian |
+| DELETE | `/api/authors/{id}` | Delete an author | Admin, Librarian |
+
+### Publisher Management
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/publisher` | Get all publishers | All Roles |
+| POST | `/api/publisher` | Create a new publisher | Admin, Librarian |
+| GET | `/api/publisher/{id}` | Get publisher by ID | All Roles |
+| PUT | `/api/publisher/{id}` | Update a publisher | Admin, Librarian |
+| DELETE | `/api/publisher/{id}` | Delete a publisher | Admin, Librarian |
+
+### Book Management
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/books` | Get all books | All Roles |
+| POST | `/api/books` | Create a new book | Admin, Librarian |
+| GET | `/api/books/{id}` | Get book by ID | All Roles |
+| PUT | `/api/books/{id}` | Update a book | Admin, Librarian |
+| DELETE | `/api/books/{id}` | Delete a book | Admin, Librarian |
+| GET | `/api/books/title/{title}` | Find books by title | All Roles |
+| GET | `/api/books/category/{category}` | Find books by category | All Roles |
+| GET | `/api/books/author/{author}` | Find books by author | All Roles |
+
+### Category Management
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/categories` | Get all categories | All Roles |
+| POST | `/api/categories` | Create a new category | Admin, Librarian |
+| PUT | `/api/categories/{id}` | Update a category | Admin, Librarian |
+| DELETE | `/api/categories/{id}` | Delete a category | Admin, Librarian |
+
+### Member Management
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/members` | Get all members | All Roles |
+| POST | `/api/members` | Create a new member | Admin, Librarian |
+| GET | `/api/members/{id}` | Get member by ID | All Roles |
+| PUT | `/api/members/{id}` | Update a member | Admin, Librarian |
+| DELETE | `/api/members/{id}` | Delete a member | Admin, Librarian |
+
+### User Management
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/users` | Get all users | Admin Only |
+| POST | `/api/users` | Create a new user | Admin Only |
+| GET | `/api/users/{id}` | Get user by ID | Admin Only |
+| PUT | `/api/users/{id}` | Update a user | Admin Only |
+| DELETE | `/api/users/{id}` | Delete a user | Admin Only |
+
+### Transaction Management
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/transactions` | Get all transactions | Admin, Librarian |
+| POST | `/api/transactions` | Create a borrow transaction | Admin, Librarian |
+| PUT | `/api/transactions/{id}` | Update a transaction | Admin, Librarian |
+
+### Activity Logs
+| Method | Endpoint | Description | Access |
+|--------|----------|-------------|--------|
+| GET | `/api/logs` | Get all activity logs | Admin Only |
+
+---
+
 ## 🔍 Database Scripts & Sample Data
 
 -   `schema.sql`: Contains the SQL scripts to create all necessary tables and define relationships.
@@ -76,3 +155,71 @@ The API follows **RESTful principles**, using standard HTTP methods (`GET`, `POS
 ## 🧪 Postman Collection
 
 A Postman collection is included in the project repository. It provides pre-configured requests to test all API endpoints, including authentication, CRUD operations, and borrowing/return flows. This makes it simple to verify the functionality of the system.
+
+### Default User Credentials
+The system comes with pre-configured users for testing:
+- **Administrator**: username: `admin`, password: `admin123`
+- **Librarian**: username: `john_doe`, password: `john123`
+
+### Importing the Postman Collection
+1. Open Postman
+2. Click "Import" and select the provided JSON file
+3. The collection will be imported with all requests pre-configured
+4. Update the environment variables if needed (base URL)
+5. Start testing the endpoints
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Java 17 or higher
+- Maven 3.6+
+- PostgreSQL 12+
+
+### Installation & Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd library-management-system
+   ```
+
+2. **Configure database**
+   ```properties
+   # application.properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/library_db
+   spring.datasource.username=your_username
+   spring.datasource.password=your_password
+   ```
+
+3. **Run the application**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+4. **Access the API**
+   - Main application: http://localhost:8080
+   - API documentation available via Postman collection
+
+### Database Initialization
+The application will automatically create the database schema on first run. Sample data can be loaded using the provided SQL scripts.
+
+---
+
+## 🔐 Security Implementation
+
+- **Password Hashing**: BCrypt with strength 12
+- **Role-Based Authorization**: Method-level security annotations
+- **SQL Injection Prevention**: Parameterized queries via Spring Data JPA
+- **Input Validation**: Comprehensive request validation
+
+---
+
+## 📧 Contact
+
+For questions about this implementation, please contact the development team at CODE81.
+
+---
+
+**Thank you for reviewing my Library Management System implementation!**

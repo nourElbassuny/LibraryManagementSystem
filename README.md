@@ -65,7 +65,7 @@ The API follows **RESTful principles**, using standard HTTP methods (`GET`, `POS
 -   **Authorization**: A custom **role-based access control (RBAC)** mechanism is in place.
     -   **`ADMINISTRATOR`**: Full access to all endpoints, including user management.
     -   **`LIBRARIAN`**: Can manage books, members, and borrowing transactions.
-    -   **`STAFF`**: Can view books category
+    -   **`STAFF`**: Can view books and category and adding publisher and author to books 
 -   User passwords are never stored in plain text.
 
 ---
